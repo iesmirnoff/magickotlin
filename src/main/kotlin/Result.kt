@@ -160,43 +160,43 @@ sealed class Result<out A> : Serializable {
         fun <A> failure(exception: Exception): Result<A> {
             return Failure(exception)
         }
+    }
+}
 
-        fun <A, B> lift(f: (A) -> B): (Result<A>) -> Result<B> {
-            return { it.map(f) }
-        }
+fun <A, B, C> map2(
+    a: Result<A>,
+    b: Result<B>,
+    f: (A) -> (B) -> C
+): Result<C> {
+    return lift2(f)(a)(b)
+}
 
-        fun <A, B, C> lift2(f: (A) -> (B) -> C): (Result<A>) -> (Result<B>) -> Result<C> {
-            return { ra ->
-                { rb ->
-                    ra.flatMap { a ->
-                        rb.map { b -> f(a)(b) }
-                    }
-                }
+fun <A, B> lift(f: (A) -> B): (Result<A>) -> Result<B> {
+    return { it.map(f) }
+}
+
+fun <A, B, C> lift2(f: (A) -> (B) -> C): (Result<A>) -> (Result<B>) -> Result<C> {
+    return { ra ->
+        { rb ->
+            ra.flatMap { a ->
+                rb.map { b -> f(a)(b) }
             }
         }
+    }
+}
 
-        fun <A, B, C, D> lift3(f: (A) -> (B) -> (C) -> D): (Result<A>) -> (Result<B>) -> (Result<C>) -> Result<D> {
-            return { ra ->
-                { rb ->
-                    { rc ->
-                        ra.flatMap { a ->
-                            rb.flatMap { b ->
-                                rc.map { c ->
-                                    f(a)(b)(c)
-                                }
-                            }
+fun <A, B, C, D> lift3(f: (A) -> (B) -> (C) -> D): (Result<A>) -> (Result<B>) -> (Result<C>) -> Result<D> {
+    return { ra ->
+        { rb ->
+            { rc ->
+                ra.flatMap { a ->
+                    rb.flatMap { b ->
+                        rc.map { c ->
+                            f(a)(b)(c)
                         }
                     }
                 }
             }
-        }
-
-        fun <A, B, C> map2(
-            a: Result<A>,
-            b: Result<B>,
-            f: (A) -> (B) -> C
-        ): Result<C> {
-            return lift2(f)(a)(b)
         }
     }
 }

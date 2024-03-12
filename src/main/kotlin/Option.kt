@@ -58,14 +58,6 @@ sealed class Option<out A> {
     }
 }
 
-fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> = {
-    try {
-        it.map(f)
-    } catch (e: Exception) {
-        Option()
-    }
-}
-
 fun <A, B, C> map2(oa: Option<A>, ob: Option<B>, f: (A) -> (B) -> C): Option<C> {
     return oa.flatMap { a -> ob.map { b -> f(a)(b) } }
 }
@@ -80,21 +72,5 @@ val mean: (List<Double>) -> Option<Double> = { list ->
 val variance: (List<Double>) -> Option<Double> = { list ->
     mean(list).flatMap { m ->
         mean(list.map { x -> (x - m).pow(2.0) })
-    }
-}
-
-fun <A> sequence(list: RecursiveList<Option<A>>): Option<RecursiveList<A>> {
-    return traverse(list) { x -> x }
-}
-
-fun <A, B> traverse(list: RecursiveList<A> , f: (A) -> Option<B>): Option<RecursiveList<B>> {
-    return list.foldRight(Option(RecursiveList())) { x ->
-        { y: Option<RecursiveList<B>> ->
-            map2(f(x), y) { a ->
-                { b: RecursiveList<B> ->
-                    b.cons(a)
-                }
-            }
-        }
     }
 }

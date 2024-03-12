@@ -2,7 +2,7 @@ import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
 
 
-class RecursiveListTest {
+class RecListTest {
 
     @Test
     fun test_toString() {
@@ -58,7 +58,7 @@ class RecursiveListTest {
     @Test
     fun test_len() {
         val list = Cons(1, 2, 3)
-        assertEquals(3, list.len())
+        assertEquals(3, list.length())
     }
 
     @Test
@@ -79,7 +79,7 @@ class RecursiveListTest {
         val row2 = Cons(4, 5)
         val row3 = Cons(6, 7, 8)
         val column = Cons(row1, row2, row3)
-        assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, NIL]", RecursiveList.flatten(column).toString())
+        assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, NIL]", RecList.flatten(column).toString())
     }
 
     @Test
@@ -98,5 +98,12 @@ class RecursiveListTest {
     fun test_flatMap() {
         val list = Cons(1, 2, 3)
         assertEquals("[1, -1, 2, -2, 3, -3, NIL]", list.flatMap { Cons(it, -it) }.toString())
+    }
+
+    @Test
+    fun test_lenMemoized() {
+        val list = Cons(1, 2, 3)
+        assertEquals(list.length, list.length())
+        assertEquals(list.length(), 3)
     }
 }
