@@ -2,17 +2,45 @@ import java.io.IOException
 
 fun main() {
 
-    val toons: Map<String, Toon> = mapOf(
-        "Mickey" to Toon("Mickey", "Mouse", "mickey@disney.com"),
-        "Minnie" to Toon("Minnie", "Mouse"),
-        "Donald" to Toon("Donald", "Duck", "donald@disney.com")
-    )
-
-    val toon = getName()
-        .flatMap(toons::getResult)
-        .flatMap(Toon::email)
-    println(toon)
+    (1..10).toList()
+        .map {
+            println(it)
+            it
+        }
+        .map { it * 2 }
+        .map {
+            println(it)
+            it
+        }
+        .toList()
+    println()
+    Stream.from(1)
+        .takeAtMost(10)
+        .map {
+            println(it)
+            it
+        }
+        .map { it * 2 }
+        .map {
+            println(it)
+            it
+        }
+        .toList()
 }
+
+fun main1(args: Array<String>) {
+    var stream = Stream.from(0).takeWhile { it < 5 }.append(Lazy { Stream.from(7) })
+    var h = stream.headSafe()
+    while (h.exists { it < 10 }) {
+        println(h.getOrElse(-1))
+        stream = stream.tail().getOrElse(Stream.invoke())
+        h = stream.headSafe()
+    }
+}
+
+fun or(a: Lazy<Boolean>, b: Lazy<Boolean>): Boolean =
+    if (a()) true else b()
+
 
 fun getName(): Result<String> {
     return try {
@@ -47,7 +75,8 @@ data class Toon internal constructor(
             lastName: String
         ): Toon {
             return Toon(
-                firstName, lastName, Result.Empty)
+                firstName, lastName, Result.Empty
+            )
         }
 
         operator fun invoke(

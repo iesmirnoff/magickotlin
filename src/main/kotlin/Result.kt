@@ -132,7 +132,7 @@ sealed class Result<out A> : Serializable {
     }
 
     companion object {
-        operator fun <A> invoke(value: A? = null): Result<A> {
+        operator fun <A> invoke(value: A?): Result<A> {
             return when (value) {
                 null -> Failure(NullPointerException())
                 else -> Success<A>(value)
